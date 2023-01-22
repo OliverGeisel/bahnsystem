@@ -234,15 +234,15 @@ def save(values: dict):
     # header
     header = f"""[Allgemein]
 Name={values["h-name"]} 
-Art=3
+Art={int(values["mannschaften"]) - 1}
 Anzahl={values["spieler_je_mannschaft"]}
-Anzahl Bahnen={values["mannschaften"]}
+Anzahl Bahnen={values["num_bahnen_genutzt"]}
 """
     output.append(header)
     for i in range(1, int(values["num_bahnen_vorhanden"]) + 1):
         invalid = i > int(values["num_bahnen_genutzt"])
         output.append(write_lane(i, values, invalid))
-    with pathlib.Path("neu.ini").open(mode="w") as outputFile:
+    with pathlib.Path(f"{values['h-name']}.ini").open(mode="w") as outputFile:
         outputFile.writelines(output)
 
 
@@ -296,6 +296,7 @@ Nur wenn für alle gilt."""),
             print("aktualisiert")
         if event == "h-save":
             save(values)
+            sg.Popup("Schema gespeichert")
         if event == sg.WINDOW_CLOSED:
             window.close()
             return
