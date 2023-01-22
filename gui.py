@@ -174,16 +174,16 @@ def write_wechsel_and_select(abräumer, back, bahn_num, bahnwahl, durchgang, inv
             if not str(values[f"selected-mannschaft-{durchgang}"]).__contains__("/"):
                 durchgang_der_mannschaft = durchgang
             else:
-                durchgang_der_mannschaft = str(values[f"selected-mannschaft-{durchgang}"]).split("/")[1].split("-")[
-                    mannschaft_nummer_index]
-            spieler_der_mannschaft = bahnwahl["select"][start_pos - 1][1] + (durchgang_der_mannschaft - 1) * \
-                                     bahnwahl["spieler_je_mannschaft"] - 1
-            mannschaft_nummer = str(values[f"selected-mannschaft-{durchgang}"]).split("/")[0].split("-")[
-                mannschaft_nummer_index]
-            mannschaft = int(mannschaft_nummer) - 1
-            volle_out = volle
-            abräumer_out = abräumer
-            zeit_out = zeit
+                durchgang_der_mannschaft = int(str(values[f"selected-mannschaft-{durchgang}"]).split("/")[1].split("-")[
+                                                   mannschaft_nummer_index])
+            spieler_der_mannschaft: int = bahnwahl["select"][start_pos - 1][1] + (durchgang_der_mannschaft - 1) * \
+                                          bahnwahl["spieler_je_mannschaft"] - 1
+            mannschaft_nummer: int = int(str(values[f"selected-mannschaft-{durchgang}"]).split("/")[0].split("-")[
+                                             mannschaft_nummer_index])
+            mannschaft: int = int(mannschaft_nummer) - 1
+            volle_out: int = volle
+            abräumer_out: int = abräumer
+            zeit_out: int = zeit
         back += f"""Spieler {satz_gesamt}={spieler_der_mannschaft}
 Mannschaft {satz_gesamt}={mannschaft}
 Volle {satz_gesamt}={volle_out}
