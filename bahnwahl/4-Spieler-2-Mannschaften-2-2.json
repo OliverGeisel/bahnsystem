@@ -1,0 +1,23 @@
+{
+  "mannschaften": 2,
+  "spieler_je_mannschaft": 2,
+  "select": [
+    [
+      1,
+      1
+    ],
+    [
+      1,
+      2
+    ],
+    [
+      2,
+      1
+    ],
+    [
+      2,
+      2
+    ]
+  ],
+  "select-description": "Array of Array. First value is mannschaft, second value is player in mannschaft"
+}
