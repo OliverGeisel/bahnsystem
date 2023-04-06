@@ -15,13 +15,13 @@ def create_start_window() -> sg.Window:
     return window
 
 
-def add_bahn(bahn_num: int, durchgänge: int, spieler_anzahl: int, mannschaften: int) -> sg.Frame:
+def add_bahn(bahn_num: int, durchgaenge: int, spieler_anzahl: int, mannschaften: int) -> sg.Frame:
     bahn_layout = [[sg.T("Spieler"),
                     sg.Drop(values=[x for x in range(1, spieler_anzahl + 1)], key=f"spieler-{bahn_num}-{1}",
                             size=(10, 1)), sg.T("Mannschaft"),
                     sg.Drop(values=[x for x in range(1, mannschaften + 1)], key=f"mannschaft-{bahn_num}-{1}",
                             size=(10, 1))]]
-    for i in range(2, durchgänge + 1):
+    for i in range(2, durchgaenge + 1):
         bahn_layout.append([sg.T("Spieler"),
                             sg.Drop(values=[x for x in range(1, spieler_anzahl + 1)], key=f"spieler-{bahn_num}-{i}",
                                     size=(10, 1)), sg.T("Mannschaft"),
@@ -33,7 +33,7 @@ def add_bahn(bahn_num: int, durchgänge: int, spieler_anzahl: int, mannschaften:
 
 def add_durchgang(bahn_anzahl: int, window: sg.Window, durchgang_num: int, spieleranzahl, mannschaften):
     """
-    Adds a extra set to the gui.
+    Adds an extra set to the gui.
 
     :param bahn_anzahl:
     :type bahn_anzahl:
@@ -73,8 +73,8 @@ def create_new_window() -> sg.Window:
     values_wahl.append("KEINE")
     haupt_frame_layout = [[sg.T("Name", tooltip="Name des Bahnschemas", ), sg.Input("", key="h-name")],
                           [sg.T("Wechselmodus",
-                                tooltip="Gibt die das System pro Durchgang an. Das Steruelement gibt die Mannschaft an."
-                                        + " Es wird automatisch durch die Konfiguration die Sätze mit erstellte."),
+                                tooltip="Gibt die das System pro Durchgang an. Das Steuerelement gibt die Mannschaft "
+                                        + "an. Es wird automatisch durch die Konfiguration die Sätze mit erstellte."),
                            sg.Drop(values=values_wechsel, default_value="KEINE", key="h-wechselmodus"),
                            sg.T("Spieler wahl",
                                 tooltip="Wahl des Spielers. Nimmt die Mannschaft und setzt den passenden Spieler ein."),
@@ -84,7 +84,8 @@ def create_new_window() -> sg.Window:
                            sg.T("Anzahl Spieler je Mannschaft"),
                            sg.Input("4", key="spieler_je_mannschaft", size=(5, 1))],
                           [sg.T("Anzahl Bahnen genutzt"), sg.Input("4", key="num_bahnen_genutzt", size=(5, 1)),
-                           sg.T("Anzahl Bahnen verfügbar"), sg.Input("8", key="num_bahnen_vorhanden", size=(5, 1))],
+                           sg.T("Anzahl Bahnen verfügbar"), sg.Input("8", key="num_bahnen_vorhanden", size=(5, 1)),
+                           sg.Check("Füllen", default=True, key="füllen")],
                           [sg.T("Durchgänge"), sg.Input("2", key="num_durchgänge", size=(5, 1))],
                           [sg.T("Volle", tooltip="Anzahl Volle pro Satz/Durchgang."),
                            sg.Input("15", key="volle", size=(6, 1)),
@@ -104,14 +105,14 @@ def create_new_window() -> sg.Window:
     return sg.Window("Neues Bahnschema", layout=layout)
 
 
-def create_durchgang_string(volle: int, abräumer: int, zeit: int, durchgang: int, bahn_num: int, values: dict,
+def create_durchgang_string(volle: int, abraeumer: int, zeit: int, durchgang: int, bahn_num: int, values: dict,
                             invalid: bool = False) -> str:
     """
     Creates the
     :param volle:
     :type volle:
-    :param abräumer:
-    :type abräumer:
+    :param abraeumer:
+    :type abraeumer:
     :param zeit:
     :type zeit:
     :param durchgang:
@@ -142,7 +143,7 @@ def create_durchgang_string(volle: int, abräumer: int, zeit: int, durchgang: in
         back = f"""Spieler {durchgang}={spieler}
         Mannschaft {durchgang}={mannschaft}
         Volle {durchgang}={volle}
-        Abraeumer {durchgang}={abräumer}
+        Abraeumer {durchgang}={abraeumer}
         Zeit {durchgang}={zeit}\n"""
     # Jeder Durchgang einzeln angegeben aber Mannschaft wird gewählt
     elif wechselmodus == "KEINE" and bahnwahl != "KEINE":
@@ -152,48 +153,49 @@ def create_durchgang_string(volle: int, abräumer: int, zeit: int, durchgang: in
         pass  # todo
     # Jeder Durchgang ist mal dem Wechselmodus und Mannschaften werden gewählt
     else:
-        back = write_wechsel_and_select(abräumer, back, bahn_num, bahnwahl, durchgang, invalid, values, volle,
+        back = write_wechsel_and_select(abraeumer, back, bahn_num, bahnwahl, durchgang, invalid, values, volle,
                                         wechselmodus, zeit)
     return back
 
 
-def write_wechsel_and_select(abräumer, back, bahn_num, bahnwahl, durchgang, invalid, values, volle, wechselmodus, zeit):
+def write_wechsel_and_select(abraeumer: int, back: str, bahn_num: int, bahnwahl: dict, durchgang: int, invalid: bool,
+                             values: dict, volle: int, wechselmodus: dict, zeit: int):
     # Für jeden Satz im Wechselmodus
-    anzahl_sätze = len(wechselmodus["modus"])
+    anzahl_saetze = len(wechselmodus["modus"])
     for satz_num, satz in enumerate(wechselmodus["modus"], 1):
-        satz_gesamt = (durchgang - 1) * anzahl_sätze + satz_num
+        satz_gesamt = (durchgang - 1) * anzahl_saetze + satz_num
         if invalid:
             spieler_der_mannschaft = -1
             mannschaft = -1
-            volle_out = ""
-            abräumer_out = ""
-            zeit_out = ""
+            volle_out: str = ""
+            abraeumer_out: str = ""
+            zeit_out: str = ""
         else:
             start_pos = satz[bahn_num - 1]  #
             mannschaft_nummer_index = bahnwahl["select"][start_pos - 1][0] - 1
-            if not str(values[f"selected-mannschaft-{durchgang}"]).__contains__("/"):
+            if "/" not in str(values[f"selected-mannschaft-{durchgang}"]):
                 durchgang_der_mannschaft = durchgang
             else:
                 durchgang_der_mannschaft = int(str(values[f"selected-mannschaft-{durchgang}"]).split("/")[1].split("-")[
                                                    mannschaft_nummer_index])
-            spieler_der_mannschaft: int = bahnwahl["select"][start_pos - 1][1] + (durchgang_der_mannschaft - 1) * \
-                                          bahnwahl["spieler_je_mannschaft"] - 1
+            spieler_der_mannschaft: int = bahnwahl["select"][start_pos - 1][1] \
+                                          + (durchgang_der_mannschaft - 1) * bahnwahl["spieler_je_mannschaft"] - 1
             mannschaft_nummer: int = int(str(values[f"selected-mannschaft-{durchgang}"]).split("/")[0].split("-")[
                                              mannschaft_nummer_index])
             mannschaft: int = int(mannschaft_nummer) - 1
             volle_out: int = volle
-            abräumer_out: int = abräumer
+            abraeumer_out: int = abraeumer
             zeit_out: int = zeit
         back += f"""Spieler {satz_gesamt}={spieler_der_mannschaft}
 Mannschaft {satz_gesamt}={mannschaft}
 Volle {satz_gesamt}={volle_out}
-Abraeumer {satz_gesamt}={abräumer_out}
+Abräumer {satz_gesamt}={abraeumer_out}
 Zeit {satz_gesamt}={zeit_out}
 """
     return back
 
 
-def write_lane(bahn_num: int, values: dict, invalid=False) -> str:
+def write_lane(bahn_num: int, values: dict, invalid: bool = False) -> str:
     """
     create string for a single line
     :param bahn_num: number of the lane
@@ -208,15 +210,15 @@ def write_lane(bahn_num: int, values: dict, invalid=False) -> str:
     if not invalid:
         zeit = int(values["zeit"])
         volle = int(values["volle"])
-        abräumer = int(values["abräumer"])
+        abraeumer = int(values["abräumer"])
     else:
         zeit = 0
         volle = 0
-        abräumer = 0
-    anzahl_durchgänge = int(values["num_durchgänge"])
+        abraeumer = 0
+    anzahl_durchgaenge = int(values["num_durchgänge"])
     string = f"[Bahn {bahn_num}]\n"
-    for durchgang in range(1, anzahl_durchgänge + 1):
-        durchgang_string = create_durchgang_string(volle, abräumer, zeit, durchgang, bahn_num,
+    for durchgang in range(1, anzahl_durchgaenge + 1):
+        durchgang_string = create_durchgang_string(volle, abraeumer, zeit, durchgang, bahn_num,
                                                    values, invalid)
         string += durchgang_string
     return string
@@ -225,7 +227,7 @@ def write_lane(bahn_num: int, values: dict, invalid=False) -> str:
 def save(values: dict):
     """
     Create the new .ini file. The name ist "new.ini"
-    :param values: vallues from the gui
+    :param values: values from the gui
     :type values: dict
     :return: nothing
     :rtype: -
@@ -242,6 +244,9 @@ Anzahl Bahnen={values["num_bahnen_genutzt"]}
     for i in range(1, int(values["num_bahnen_vorhanden"]) + 1):
         invalid = i > int(values["num_bahnen_genutzt"])
         output.append(write_lane(i, values, invalid))
+    if values["füllen"]:
+        # todo fill if missing  .p
+        pass
     with pathlib.Path(f"{values['h-name']}.ini").open(mode="w") as outputFile:
         outputFile.writelines(output)
 
@@ -279,16 +284,16 @@ BSP: 1-2-3/1-3-2= Mannschaften 1,2 und 3. Mannschaft 1 hat seinen ersten Durchga
 Sollte der Durchgang der Mannschaft mit dem des gesamten Durchgang kann es weggelassen werden. 
 Nur wenn für alle gilt."""),
                      sg.Input(key=f"selected-mannschaft-{i}", size=(10, 1))])
-            layout_add = [[sg.Column(column_layout, key="steuer-spalte")]]
+            layout_add: list = [[sg.Column(column_layout, key="steuer-spalte")]]
             for i in range(1, int(values["num_bahnen_genutzt"]) + 1):
                 layout_add[0].append(
                     add_bahn(i, durchgaenge, int(values["spieler_je_mannschaft"]), int(values["mannschaften"])))
             window.extend_layout(frame_bahn, layout_add)
         if event == "h-add-durchgang":
-            durchgänge_count = window["num_durchgänge"]
-            num_durchgänge_alt = int(durchgänge_count.get())
-            durchgänge_count.update(value=str(num_durchgänge_alt + 1))
-            add_durchgang(int(values["num_bahnen_genutzt"]), window, num_durchgänge_alt + 1,
+            durchgaenge_count = window["num_durchgänge"]
+            num_durchgaenge_alt = int(durchgaenge_count.get())
+            durchgaenge_count.update(value=str(num_durchgaenge_alt + 1))
+            add_durchgang(int(values["num_bahnen_genutzt"]), window, num_durchgaenge_alt + 1,
                           int(values["spieler_je_mannschaft"]), int(values["mannschaften"]))
         if event == "h-update":
             frame_bahn = window["frame-bahn"]
