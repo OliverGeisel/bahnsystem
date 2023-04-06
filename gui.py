@@ -189,7 +189,7 @@ def write_wechsel_and_select(abraeumer: int, back: str, bahn_num: int, bahnwahl:
         back += f"""Spieler {satz_gesamt}={spieler_der_mannschaft}
 Mannschaft {satz_gesamt}={mannschaft}
 Volle {satz_gesamt}={volle_out}
-Abräumer {satz_gesamt}={abraeumer_out}
+Abraeumer {satz_gesamt}={abraeumer_out}
 Zeit {satz_gesamt}={zeit_out}
 """
     return back
