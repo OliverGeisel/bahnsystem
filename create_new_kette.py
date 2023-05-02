@@ -13,6 +13,7 @@ def create_kette_window() -> sg.Window:
          sg.Spin(values=[v for v in range(1, 21)], initial_value=4, key="bahnen_genutzt")],
         [sg.T("Anzahl Bahnen verfügbar:"),
          sg.Spin(values=[v for v in range(1, 21)], initial_value=8, key="bahnen_verfügbar")],
+        [sg.T("Mannschaften:"), sg.Sp(values=[v for v in range(1, 21)], initial_value=1, key="mannschaften_anzahl")],
         [sg.Button("Init", key="INIT"), sg.Button("Erstellen", key="CREATE", disabled=True)],
         [sg.Frame("Bahnen", layout=[[]], key="bahn_frame")]
     ]
@@ -40,7 +41,7 @@ def save(values: dict):
     # header
     header = f"""[Allgemein]
 Name={values["name"]} 
-Art={0}
+Art={int(values["mannschaften_anzahl"]) - 1}
 Anzahl={values["spieler_anzahl"]}
 Anzahl Bahnen={values["bahnen_genutzt"]}
 """

@@ -141,8 +141,9 @@ Zeit {durchgang}={zeit}
 
 def create_str_ketten_lane(bahn_num: int, values: dict, disabled: bool = False):
     used_bahnen = int(values["bahnen_genutzt"])
-    count_spieler = int(values["spieler_anzahl"])
-    max_durchgaenge = count_spieler + used_bahnen - 1
+    count_spieler_per_m = int(values["spieler_anzahl"])
+    count_mannschaften = int(values["mannschaften_anzahl"])
+    max_durchgaenge = count_spieler_per_m * count_mannschaften + used_bahnen - 1
     if disabled:
         zeit = 0
         volle = 0
@@ -156,7 +157,9 @@ def create_str_ketten_lane(bahn_num: int, values: dict, disabled: bool = False):
         if disabled or durchgang < bahn_num or durchgang > max_durchgaenge - (4 - bahn_num):
             string += empty_bahn_durchgang(durchgang)
         else:
-            spieler = durchgang - bahn_num
-            durchgang_string = create_str_kette_durhgang(volle, abraeumer, zeit, durchgang, spieler)
+            spieler = (durchgang - bahn_num) // count_mannschaften
+            mannschaft = durchgang % count_mannschaften - 1 if durchgang % count_mannschaften != 0 \
+                else count_mannschaften - 1
+            durchgang_string = create_str_durchgang(volle, abraeumer, zeit, durchgang, spieler, mannschaft)
             string += durchgang_string
     return string
