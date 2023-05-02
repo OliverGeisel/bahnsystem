@@ -2,6 +2,25 @@ import json
 import pathlib
 
 
+def empty_bahn_durchgang(durchgang: int) -> str:
+    return f"""Spieler {durchgang}=-1
+Mannschaft {durchgang}=-1
+Volle {durchgang}=
+Abraeumer {durchgang}=
+Zeit {durchgang}=
+"""
+
+
+def create_str_durchgang(volle: int, abraeumer: int, zeit: int, durchgang: int, spieler: int,
+                         mannschaft: int) -> str:
+    return f"""Spieler {durchgang}={spieler}
+Mannschaft {durchgang}={mannschaft}
+Volle {durchgang}={volle}
+Abraeumer {durchgang}={abraeumer}
+Zeit {durchgang}={zeit}
+"""
+
+
 def create_block_durchgang_string(volle: int, abraeumer: int, zeit: int, durchgang: int, bahn_num: int, values: dict,
                                   invalid: bool = False) -> str:
     """
@@ -37,11 +56,7 @@ def create_block_durchgang_string(volle: int, abraeumer: int, zeit: int, durchga
     if wechselmodus == "KEINE" and bahnwahl == "KEINE":
         spieler = int(values[f"spieler-{bahn_num}-{durchgang}"]) - 1
         mannschaft = int(values[f"mannschaft-{bahn_num}-{durchgang}"]) - 1
-        back = f"""Spieler {durchgang}={spieler}
-        Mannschaft {durchgang}={mannschaft}
-        Volle {durchgang}={volle}
-        Abraeumer {durchgang}={abraeumer}
-        Zeit {durchgang}={zeit}\n"""
+        back = create_str_durchgang(volle, abraeumer, zeit, durchgang, spieler, mannschaft)
     # Jeder Durchgang einzeln angegeben aber Mannschaft wird gewählt
     elif wechselmodus == "KEINE" and bahnwahl != "KEINE":
         pass  # todo
@@ -56,18 +71,13 @@ def create_block_durchgang_string(volle: int, abraeumer: int, zeit: int, durchga
 
 
 def create_block_wechsel_and_select(abraeumer: int, back: str, bahn_num: int, bahnwahl: dict, durchgang: int,
-                                    invalid: bool,
-                                    values: dict, volle: int, wechselmodus: dict, zeit: int):
+                                    invalid: bool, values: dict, volle: int, wechselmodus: dict, zeit: int) -> str:
     # Für jeden Satz im Wechselmodus
     anzahl_saetze = len(wechselmodus["modus"])
     for satz_num, satz in enumerate(wechselmodus["modus"], 1):
         satz_gesamt = (durchgang - 1) * anzahl_saetze + satz_num
         if invalid:
-            spieler_der_mannschaft = -1
-            mannschaft = -1
-            volle_out: str = ""
-            abraeumer_out: str = ""
-            zeit_out: str = ""
+            back += empty_bahn_durchgang(satz_gesamt)
         else:
             start_pos = satz[bahn_num - 1]  #
             mannschaft_nummer_index = bahnwahl["select"][start_pos - 1][0] - 1
@@ -84,12 +94,8 @@ def create_block_wechsel_and_select(abraeumer: int, back: str, bahn_num: int, ba
             volle_out: int = volle
             abraeumer_out: int = abraeumer
             zeit_out: int = zeit
-        back += f"""Spieler {satz_gesamt}={spieler_der_mannschaft}
-Mannschaft {satz_gesamt}={mannschaft}
-Volle {satz_gesamt}={volle_out}
-Abraeumer {satz_gesamt}={abraeumer_out}
-Zeit {satz_gesamt}={zeit_out}
-"""
+            back += create_str_durchgang(volle_out, abraeumer_out, zeit_out, satz_gesamt, spieler_der_mannschaft,
+                                         mannschaft)
     return back
 
 
@@ -121,25 +127,7 @@ def create_str_for_block_lane(bahn_num: int, values: dict, disabled: bool = Fals
     return string
 
 
-def empty_bahn_durchgang(durchgang: int):
-    return f"""Spieler {durchgang}=-1
-Mannschaft {durchgang}=-1
-Voll {durchgang}=
-Abraeumer {durchgang}=
-Zeit {durchgang}=
-"""
-
-
-def create_str_kette_durhgang(volle: int, abraeumer: int, zeit: int, durchgang: int, spieler: int, ):
-    return f"""Spieler {durchgang}={spieler}
-Mannschaft {durchgang}=0
-Voll {durchgang}={volle}
-Abraeumer {durchgang}={abraeumer}
-Zeit {durchgang}={zeit}
-"""
-
-
-def create_str_ketten_lane(bahn_num: int, values: dict, disabled: bool = False):
+def create_str_ketten_lane(bahn_num: int, values: dict, disabled: bool = False) -> str:
     used_bahnen = int(values["bahnen_genutzt"])
     count_spieler_per_m = int(values["spieler_anzahl"])
     count_mannschaften = int(values["mannschaften_anzahl"])
@@ -158,8 +146,7 @@ def create_str_ketten_lane(bahn_num: int, values: dict, disabled: bool = False):
             string += empty_bahn_durchgang(durchgang)
         else:
             spieler = (durchgang - bahn_num) // count_mannschaften
-            mannschaft = durchgang % count_mannschaften - 1 if durchgang % count_mannschaften != 0 \
-                else count_mannschaften - 1
+            mannschaft = (durchgang - bahn_num) % count_mannschaften
             durchgang_string = create_str_durchgang(volle, abraeumer, zeit, durchgang, spieler, mannschaft)
             string += durchgang_string
     return string
