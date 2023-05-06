@@ -1,3 +1,4 @@
+import json
 import pathlib
 
 import PySimpleGUI as sg
@@ -115,6 +116,15 @@ def create_new_window() -> sg.Window:
     return sg.Window("Neues Bahnschema", layout=layout)
 
 
+def valid(values: dict) -> bool:
+    wechsel_name = values["h-wechselmodus"]
+    with pathlib.Path("wechselmodus").joinpath(wechsel_name).open() as wechselmodus:
+        modus_json = json.loads(wechselmodus.read())
+    if int(modus_json["num_bahnen"]) != int(values["num_bahnen_genutzt"]):
+        return False
+    return True
+
+
 def save(values: dict):
     """
     Create the new .ini file. The name ist "new.ini"
@@ -123,6 +133,9 @@ def save(values: dict):
     :return: nothing
     :rtype: -
     """
+    if not valid(values):
+        sg.PopupError("Plan ist ungültig! Bitte ändern! ", title="Ungültige Werte!")
+        return
     output = []
     # header
     header = f"""[Allgemein]
@@ -143,6 +156,7 @@ Anzahl Bahnen={values["num_bahnen_genutzt"]}
         pass
     with pathlib.Path(f"{values['h-name']}.ini").open(mode="w") as outputFile:
         outputFile.writelines(output)
+    sg.Popup("Schema gespeichert")
 
 
 def update_frame_bahn(values: dict, window: sg.Window):
@@ -198,7 +212,7 @@ def run_create_new_window(window: sg.Window) -> None:
             update_frame_bahn(values, window)
         if event == "h-save":
             save(values)
-            sg.Popup("Schema gespeichert")
+
         if event == sg.WINDOW_CLOSED:
             window.close()
             return
