@@ -118,7 +118,7 @@ def create_new_window() -> sg.Window:
 
 def valid(values: dict) -> bool:
     wechsel_name = values["h-wechselmodus"]
-    with pathlib.Path("wechselmodus").joinpath(wechsel_name).open() as wechselmodus:
+    with pathlib.Path("wechselmodus").joinpath(wechsel_name + ".json").open() as wechselmodus:
         modus_json = json.loads(wechselmodus.read())
     if int(modus_json["num_bahnen"]) != int(values["num_bahnen_genutzt"]):
         return False
