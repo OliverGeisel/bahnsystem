@@ -53,17 +53,19 @@ def create_block_durchgang_string(volle: int, abraeumer: int, zeit: int, durchga
         bahnwahl_path = pathlib.Path(f"bahnwahl/{bahnwahl}.json")
         with bahnwahl_path.open("r") as bahnwahl_file:
             bahnwahl = json.loads(bahnwahl_file.read())
+    # process
+    # Alles muss angegeben werden
     if wechselmodus == "KEINE" and bahnwahl == "KEINE":
         spieler = int(values[f"spieler-{bahn_num}-{durchgang}"]) - 1
         mannschaft = int(values[f"mannschaft-{bahn_num}-{durchgang}"]) - 1
         back = create_str_durchgang(volle, abraeumer, zeit, durchgang, spieler, mannschaft)
-    # Jeder Durchgang einzeln angegeben aber Mannschaft wird gewählt
+    # Jeder Durchgang/Satz einzeln angeben aber Mannschaft wird gewählt
     elif wechselmodus == "KEINE" and bahnwahl != "KEINE":
         pass  # todo
-    # Jeder Durchgang mal Wechselmodus, und Mannschaft + Spieler wird angegeben
+    # Jeder Durchgang im Wechselmodus, und Mannschaft + Spieler wird angegeben
     elif wechselmodus != "KEINE" and bahnwahl == "KEINE":
         pass  # todo
-    # Jeder Durchgang ist mal dem Wechselmodus und Mannschaften werden gewählt
+    # Jeder Durchgang im Wechselmodus und Mannschaften werden gewählt im Schema-Input
     else:
         back = create_block_wechsel_and_select(abraeumer, back, bahn_num, bahnwahl, durchgang, invalid, values, volle,
                                                wechselmodus, zeit)
