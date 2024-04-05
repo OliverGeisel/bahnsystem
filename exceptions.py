@@ -1,0 +1,2 @@
+class IllegalInputException(Exception):
+    pass

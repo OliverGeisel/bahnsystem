@@ -73,7 +73,7 @@ def add_durchgang(bahn_anzahl: int, window: sg.Window, durchgang_num: int, spiel
                      size=(5, 1))]])
 
 
-def create_new_window() -> sg.Window:
+def create_new_block_window() -> sg.Window:
     """
     Main loop for create new schema
     :return: nothing
@@ -116,9 +116,9 @@ def create_new_window() -> sg.Window:
          sg.Button("Speichern", key="h-save", disabled=True)]]
     haupt_frame = sg.Frame("Hauptinfos", layout=haupt_frame_layout)
     schema_layout = [[]]
-    schema = sg.Frame("Bahnanlegung", layout=schema_layout, key="frame-bahn", expand_x=True)
-    layout = [[haupt_frame], [schema]]
-    return sg.Window("Neues Bahnschema", layout=layout)
+    schema = sg.Frame("Bahnanlegung", layout=schema_layout, key="frame-bahn", expand_x=True, expand_y=True)
+    layout = [[haupt_frame], [sg.Col(layout=[[schema]], expand_x=True, expand_y=True, scrollable=True)]]
+    return sg.Window("Neues Bahnschema", layout=layout, resizable=True, size=(800, 600))
 
 
 def valid(values: dict) -> bool:
@@ -161,7 +161,11 @@ Anzahl Bahnen={values["num_bahnen_genutzt"]}
     if values["füllen"]:
         # todo fill if missing  .p
         pass
-    with pathlib.Path(f"{values['h-name']}.ini").open(mode="w") as outputFile:
+    # write to out dir
+    out_dir = pathlib.Path("out")
+    if not out_dir.exists():
+        out_dir.mkdir()
+    with out_dir.joinpath(f"{values['h-name']}.ini").open(mode="w") as outputFile:
         outputFile.writelines(output)
     sg.Popup("Schema gespeichert")
 

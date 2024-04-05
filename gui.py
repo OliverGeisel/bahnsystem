@@ -1,6 +1,6 @@
 import PySimpleGUI as sg
 
-from create_new_block import create_new_window, run_create_new_window
+from create_new_block import create_new_block_window, run_create_new_window
 from create_new_kette import create_kette_window, run_kette_window
 
 
@@ -19,7 +19,7 @@ def run_start_window(window: sg.Window):
     event, value = window.read()
     if event == "NEU":
         window.close()
-        new_window = create_new_window()
+        new_window = create_new_block_window()
         run = run_create_new_window
     elif event == "KETTE":
         window.close()

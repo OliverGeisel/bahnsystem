@@ -54,7 +54,7 @@ def create_block_durchgang_string(volle: int, abraeumer: int, zeit: int, durchga
         with bahnwahl_path.open("r") as bahnwahl_file:
             bahnwahl = json.loads(bahnwahl_file.read())
     # process
-    # Alles muss angegeben werden
+    # alles muss angegeben werden
     if wechselmodus == "KEINE" and bahnwahl == "KEINE":
         spieler = int(values[f"spieler-{bahn_num}-{durchgang}"]) - 1
         mannschaft = int(values[f"mannschaft-{bahn_num}-{durchgang}"]) - 1

@@ -52,7 +52,11 @@ Anzahl Bahnen={values["bahnen_genutzt"]}
     for i in range(1, bahnen_vorhanden + 1):
         disabled = i > bahnen_genutzt
         output.append(create_str_ketten_lane(i, values, disabled))
-    with pathlib.Path(f"{values['name']}.ini").open(mode="w") as outputFile:
+    # write to out dir
+    out_dir = pathlib.Path("out")
+    if not out_dir.exists():
+        out_dir.mkdir()
+    with out_dir.joinpath(f"{values['name']}.ini").open(mode="w") as outputFile:
         outputFile.writelines(output)
     sg.PopupOK("Schema wurde erstellt!", title="Gespeichert")
 
