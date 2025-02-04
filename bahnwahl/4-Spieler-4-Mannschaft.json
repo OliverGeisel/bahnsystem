@@ -1,0 +1,23 @@
+{
+  "Comment": "Kann für n>=4 Mannschaften verwendet werden. Spieler werden durchgezählt",
+  "mannschaften": 4,
+  "spieler_je_mannschaft": 1,
+  "select": [
+    [
+      1,
+      1
+    ],
+    [
+      2,
+      1
+    ],
+    [
+      3,
+      1
+    ],
+    [
+      4,
+      1
+    ]
+  ]
+}
