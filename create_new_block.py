@@ -61,7 +61,7 @@ def add_durchgang(bahn_anzahl: int, window: sg.Window, durchgang_num: int, spiel
     """
     steuer_spalte = window["steuer-spalte"]
     window.extend_layout(steuer_spalte, [[sg.T("Mannschaft-Format"),
-                                          sg.Input("", key=f"selected-mannschaft-{durchgang_num}", size=(10, 1))]])
+                                          sg.Input("", key=f"selected-mannschaft-{durchgang_num}", size=(30, 1))]])
     for bahn in range(1, bahn_anzahl + 1):
         bahn_spalte = window[f"bahn-{bahn}-spalte"]
         window.extend_layout(bahn_spalte, [
@@ -124,7 +124,7 @@ def create_new_block_window() -> sg.Window:
 def valid(values: dict) -> bool:
     wechsel_name = values["h-wechselmodus"]
     if wechsel_name == "KEINE":
-        return True
+        return False
     with pathlib.Path("wechselmodus").joinpath(wechsel_name + ".json").open() as wechselmodus:
         modus_json = json.loads(wechselmodus.read())
     if int(modus_json["num_bahnen"]) != int(values["num_bahnen_genutzt"]):
@@ -207,7 +207,7 @@ def run_create_new_window(window: sg.Window) -> None:
             for i in range(1, durchgaenge + 1):
                 column_layout.append(
                     [sg.T("Mannschaft-Format", tooltip=TOOLTIP_FORMAT),
-                     sg.Input(key=f"selected-mannschaft-{i}", size=(10, 1))])
+                     sg.Input(key=f"selected-mannschaft-{i}", size=(30, 1))])
             layout_add: list = [[sg.Frame("Mannschaft im Durchgang", column_layout, key="steuer-spalte")]]
             for i in range(1, int(values["num_bahnen_genutzt"]) + 1):
                 layout_add[0].append(
@@ -222,7 +222,10 @@ def run_create_new_window(window: sg.Window) -> None:
         elif event == "h-update":
             update_frame_bahn(values, window)
         elif event == "h-save":
-            save(values)
+            try:
+                save(values)
+            except Exception as e:
+                sg.PopupError(f"Fehler beim Speichern: {e}", title="Fehler!")
         elif event == sg.WINDOW_CLOSED or event == sg.WIN_X_EVENT:
             window.close()
             return
