@@ -1,7 +1,7 @@
 import json
 import pathlib
 
-import PySimpleGUI as sg
+import PySimpleGUI4 as sg
 
 from writing import create_str_for_block_lane
 
@@ -46,18 +46,18 @@ def add_durchgang(bahn_anzahl: int, window: sg.Window, durchgang_num: int, spiel
     """
     Adds an extra set to the gui.
 
-    :param bahn_anzahl:
-    :type bahn_anzahl:
-    :param window:
-    :type window:
-    :param durchgang_num:
-    :type durchgang_num:
-    :param spieleranzahl:
-    :type spieleranzahl:
-    :param mannschaften:
-    :type mannschaften:
-    :return:
-    :rtype:
+    :param bahn_anzahl: Number of Bahnen
+    :type bahn_anzahl: int
+    :param window: Window to update
+    :type window: sg.Window
+    :param durchgang_num: Number of Durchgang
+    :type durchgang_num: int
+    :param spieleranzahl: Number of Spieler
+    :type spieleranzahl: int
+    :param mannschaften: Number of Mannschaften
+    :type mannschaften: int
+    :return: -
+    :rtype: -
     """
     steuer_spalte = window["steuer-spalte"]
     window.extend_layout(steuer_spalte, [[sg.T("Mannschaft-Format"),
@@ -75,9 +75,9 @@ def add_durchgang(bahn_anzahl: int, window: sg.Window, durchgang_num: int, spiel
 
 def create_new_block_window() -> sg.Window:
     """
-    Main loop for create new schema
-    :return: nothing
-    :rtype: -
+    Create the new window for creating a new block schema.
+    :return: the new window
+    :rtype: sg.Window
     """
     values_wechsel = [modus.stem for modus in pathlib.Path("wechselmodus").iterdir() if modus.is_file()]
     values_wechsel.append("KEINE")
@@ -122,6 +122,13 @@ def create_new_block_window() -> sg.Window:
 
 
 def valid(values: dict) -> bool:
+    """
+    Validate the current values.
+    :type values: dict
+    :param values: values from the gui
+    :return: True if valid, else False
+    :rtype: bool
+    """
     wechsel_name = values["h-wechselmodus"]
     if wechsel_name == "KEINE":
         return False
@@ -132,7 +139,7 @@ def valid(values: dict) -> bool:
     return True
 
 
-def save(values: dict):
+def save(values: dict)-> None:
     """
     Create the new .ini file. The name ist "new.ini"
     :param values: values from the gui
@@ -170,7 +177,7 @@ Anzahl Bahnen={values["num_bahnen_genutzt"]}
     sg.Popup("Schema gespeichert")
 
 
-def update_frame_bahn(values: dict, window: sg.Window):
+def update_frame_bahn(values: dict, window: sg.Window)-> None:
     """
     Event Function for Update-Button.
     :param values: dict from inputs
@@ -231,15 +238,21 @@ def run_create_new_window(window: sg.Window) -> None:
             return
 
 
-def disable_buttons(window):
+def disable_buttons(window: sg.Window) -> None:
+    """
+    Disable the init-buttons and enable the others.
+    :param window: Window to update
+    :type window: sg.Window
+    :return: None
+    """
     update_button = window["h-update"]
     add_button = window["h-add-durchgang"]
     save_button = window["h-save"]
-    window["mannschaften"].update(disabled=True)
-    window["spieler_je_mannschaft"].update(disabled=True)
-    window["num_bahnen_genutzt"].update(disabled=True)
-    window["num_bahnen_vorhanden"].update(disabled=True)
-    window["h-init"].update(disabled=True)
-    update_button.update(disabled=False)
-    add_button.update(disabled=False)
-    save_button.update(disabled=False)
+    window["mannschaften"].update(disabled=True,visible=True)
+    window["spieler_je_mannschaft"].update(disabled=True,visible=True)
+    window["num_bahnen_genutzt"].update(disabled=True,visible=True)
+    window["num_bahnen_vorhanden"].update(disabled=True,visible=True)
+    window["h-init"].update(disabled=True,visible=True)
+    update_button.update(disabled=False,visible=True)
+    add_button.update(disabled=False,visible=True)
+    save_button.update(disabled=False,visible=True)

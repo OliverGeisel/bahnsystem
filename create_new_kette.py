@@ -1,6 +1,6 @@
 import pathlib
 
-import PySimpleGUI as sg
+import PySimpleGUI4 as sg
 
 from writing import create_str_ketten_lane
 
@@ -14,7 +14,7 @@ def create_kette_window() -> sg.Window:
         [sg.T("Anzahl Bahnen verfügbar:"),
          sg.Spin(values=[v for v in range(1, 21)], initial_value=8, key="bahnen_verfügbar")],
         [sg.T("Mannschaften:"), sg.Sp(values=[v for v in range(1, 21)], initial_value=1, key="mannschaften_anzahl")],
-        [sg.Button("Init", key="INIT"), sg.Button("Erstellen", key="CREATE", disabled=True)],
+        [sg.Button("Init", key="INIT"), sg.Button("Erstellen", key="CREATE", disabled=True, visible=True)],
         [sg.Frame("Bahnen", layout=[[]], key="bahn_frame")]
     ]
     window = sg.Window("Neuer Kettenstart", layout=layout)
@@ -37,6 +37,12 @@ def create_bahnen(values: dict, window: sg.Window):
 
 
 def save(values: dict):
+    """
+    Save the kette schema to an ini file.
+    :param values:  The values from the window.
+    :type values: dict
+    :return: None
+    """
     output = []
     # header
     header = f"""[Allgemein]
@@ -62,13 +68,19 @@ Anzahl Bahnen={values["bahnen_genutzt"]}
 
 
 def run_kette_window(window: sg.Window):
+    """
+    Runs the kette creation window.
+    :param window:  The window to run.
+    :type window: sg.Window
+    :return: None
+    """
     while True:
         event, values = window.read()
         if event == "CREATE":
             save(values)
         elif event == "INIT":
-            window["CREATE"].update(disabled=False)
-            window["INIT"].update(disabled=True)
+            window["CREATE"].update(disabled=False, visible=True)
+            window["INIT"].update(disabled=True, visible=True)
             create_bahnen(values, window)
         elif event == sg.WINDOW_CLOSED:
             return

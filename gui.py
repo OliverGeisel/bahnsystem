@@ -1,4 +1,8 @@
-import PySimpleGUI as sg
+"""
+This module contains the GUI for creating new block or chain schemas. It uses PySimpleGUI4 to create the windows and handle user interactions.
+This is the starting point of the GUI, allowing users to choose between creating a new block schema or a new chain schema.
+"""
+import PySimpleGUI4 as sg
 
 from create_new_block import create_new_block_window, run_create_new_window
 from create_new_kette import create_kette_window, run_kette_window
@@ -16,6 +20,12 @@ def create_start_window() -> sg.Window:
 
 
 def run_start_window(window: sg.Window):
+    """
+    Starting point of the GUI. This function runs the start window and handles the navigation to other windows.
+    :param window:  The start window to run.
+    :type window: sg.Window
+    :return: None
+    """
     event, value = window.read()
     if event == "NEU":
         window.close()
