@@ -254,9 +254,14 @@ def run_create_new_window(window: sg.Window) -> None:
                 save(values)
             except Exception as e:
                 sg.PopupError(f"Fehler beim Speichern: {e}", title="Fehler!")
-        elif event == sg.WINDOW_CLOSED or event == sg.WIN_X_EVENT:
+        elif event == sg.WINDOW_CLOSED:
             window.close()
             return
+        elif event == sg.WIN_X_EVENT:
+            val = sg.PopupOKCancel("Möchten Sie das Fenster wirklich schließen?")
+            if val == "OK":
+                window.close()
+                return
 
 
 def disable_buttons(window: sg.Window) -> None:
