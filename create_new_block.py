@@ -72,13 +72,22 @@ def add_durchgang(bahn_anzahl: int, window: sg.Window, durchgang_num: int, spiel
              sg.Drop(values=[x for x in range(1, mannschaften + 1)], key=f"mannschaft-{bahn}-{durchgang_num}",
                      size=(5, 1))]])
 
-
-def create_new_block_window() -> sg.Window:
+def new_block_schema(window: sg.Window) -> sg.Window:
     """
-    Create the new window for creating a new block schema.
-    :return: the new window
+    Resets the new block window.
+    :param window: Current window
+    :type window: sg.Window
+    :return: the window
     :rtype: sg.Window
+
     """
+    size = window.size
+    pos = window.current_location()
+    title = window.Title
+    window.close()
+    return sg.Window(title,location=pos,layout=_create_window_layout(), resizable=True, size=size)
+
+def _create_window_layout() -> list:
     values_wechsel = [modus.stem for modus in pathlib.Path("wechselmodus").iterdir() if modus.is_file()]
     values_wechsel.append("KEINE")
     values_wahl = [wahl.stem for wahl in pathlib.Path("bahnwahl").iterdir() if wahl.is_file()]
@@ -113,11 +122,21 @@ def create_new_block_window() -> sg.Window:
          sg.Button("Init", tooltip="Initiale Eingabe, erzeugt Bahnen und benötigte Elemente.",
                    key="h-init", disabled=False),
          sg.Button("Durchgang dazu", key="h-add-durchgang", disabled=True),
-         sg.Button("Speichern", key="h-save", disabled=True)]]
+         sg.Button("Speichern", key="h-save", disabled=True),
+         sg.Button("Neues Schema", key="h-new")],]
     haupt_frame = sg.Frame("Hauptinfos", layout=haupt_frame_layout)
     schema_layout = [[]]
     schema = sg.Frame("Bahnanlegung", layout=schema_layout, key="frame-bahn", expand_x=True, expand_y=True)
-    layout = [[haupt_frame], [sg.Col(layout=[[schema]], expand_x=True, expand_y=True, scrollable=True)]]
+    return  [[haupt_frame], [sg.Col(layout=[[schema]], expand_x=True, expand_y=True, scrollable=True)]]
+
+
+def create_new_block_window() -> sg.Window:
+    """
+    Create the new window for creating a new block schema.
+    :return: the new window
+    :rtype: sg.Window
+    """
+    layout = _create_window_layout()
     return sg.Window("Neues Bahnschema", layout=layout, resizable=True, size=(800, 600))
 
 
@@ -228,6 +247,8 @@ def run_create_new_window(window: sg.Window) -> None:
                           int(values["spieler_je_mannschaft"]), int(values["mannschaften"]))
         elif event == "h-update":
             update_frame_bahn(values, window)
+        elif event == "h-new":
+            window = new_block_schema(window)
         elif event == "h-save":
             try:
                 save(values)
